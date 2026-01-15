@@ -51,8 +51,17 @@ class Messages::SearchDataPresenter < SimpleDelegator
 
   def additional_attributes_data
     {
-      campaign_id: additional_attributes&.dig('campaign_id'),
-      automation_rule_id: content_attributes&.dig('automation_rule_id')
-    }
+      campaign_id: sanitize_integer_field(additional_attributes&.dig('campaign_id')),
+      automation_rule_id: sanitize_integer_field(content_attributes&.dig('automation_rule_id'))
+    }.compact
+  end
+
+  # Sanitizes a field that should be an integer for Elasticsearch indexing.
+  # Returns nil for invalid values to prevent mapper_parsing_exception errors.
+  def sanitize_integer_field(value)
+    return nil if value.blank?
+    return value if value.is_a?(Integer)
+
+    Integer(value, exception: false)
   end
 end

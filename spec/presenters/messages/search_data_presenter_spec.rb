@@ -59,19 +59,24 @@ RSpec.describe Messages::SearchDataPresenter do
     end
 
     context 'with campaign and automation data' do
-      before do
+      it 'sanitizes integer fields correctly' do
         message.update(
           additional_attributes: { 'campaign_id' => '123' },
-          content_attributes: { 'automation_rule_id' => '456' }
+          content_attributes: { 'automation_rule_id' => 456 }
         )
+
+        data = presenter.search_data[:additional_attributes]
+        expect(data).to eq({ campaign_id: 123, automation_rule_id: 456 })
       end
 
-      it 'includes campaign_id' do
-        expect(presenter.search_data[:additional_attributes][:campaign_id]).to eq('123')
-      end
+      it 'omits keys with invalid values' do
+        message.update(
+          additional_attributes: { 'campaign_id' => 'notificame_echo' },
+          content_attributes: { 'automation_rule_id' => '' }
+        )
 
-      it 'includes automation_rule_id' do
-        expect(presenter.search_data[:additional_attributes][:automation_rule_id]).to eq('456')
+        data = presenter.search_data[:additional_attributes]
+        expect(data).to eq({})
       end
     end
   end
