@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_01_12_092041) do
+ActiveRecord::Schema[7.1].define(version: 2026_01_15_110318) do
   # These extensions should be enabled to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
@@ -1041,6 +1041,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_12_092041) do
     t.index ["primary_actor_type", "primary_actor_id"], name: "uniq_primary_actor_per_account_notifications"
     t.index ["secondary_actor_type", "secondary_actor_id"], name: "uniq_secondary_actor_per_account_notifications"
     t.index ["user_id", "account_id", "snoozed_until", "read_at"], name: "idx_notifications_performance"
+    t.index ["user_id", "notification_type", "primary_actor_id", "secondary_actor_id"], name: "idx_notifications_unique_per_message", unique: true
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 

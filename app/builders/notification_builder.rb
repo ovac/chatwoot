@@ -35,5 +35,9 @@ class NotificationBuilder
       # secondary_actor is secondary_actor if present, else current_user
       secondary_actor: secondary_actor || current_user
     )
+  rescue ActiveRecord::RecordNotUnique
+    # Duplicate notification - safe to ignore, another worker already created it
+    Rails.logger.info "[NotificationBuilder] Duplicate notification prevented for user #{user.id}, actor #{primary_actor.id}"
+    nil
   end
 end
